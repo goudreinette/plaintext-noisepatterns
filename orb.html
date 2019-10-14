@@ -1,0 +1,89 @@
+<div id="portrait">
+    <div class="line" v-for="(line, y) in lines">
+        <template v-for="(char, x) in line.split('')">{{charForPos(char, x, y)}}</template>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.10/vue.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.15/lodash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/p5.min.js"></script>
+
+
+<script>
+$portrait = new Vue({
+    el: '#portrait',
+    data: {
+        lines: [],
+        sin: 0,
+        sinY: 0,
+        noise: 0,
+        x: 0,
+        y: 0,
+        t: 0
+    },
+    async mounted() {
+        let res = await fetch('portrait.txt')
+        let text = await res.text()
+        this.lines = text.split('\n')
+    },
+    methods: {
+        charForPos(char, x, y) {
+            let d = dist(x, y, this.x * this.lines[0].length, this.y * this.lines.length)
+
+
+            if ((noise(this.t, y) + random() / 10) > 0.9)  return "-"
+            if (d < 3) {
+                if (random() > .98) return random(["\""])
+                return "'"
+            }
+            if (d < 5) {
+                if (random() > .95) return random([",", "`"])
+                return "."
+            }
+            if (d < 7) return "-"
+            if (d < 10)  {
+                if (random() > .6) return random([":", "|"])
+                return ";"
+            }
+            if (d < 12) {
+                if (random() > .6) return random(["1", "2", "s", "x", ':'])
+                return "7"
+            }
+            if (d < 14) {
+                if (random() > .8) return random(["1", "2", "s", "x", ':'])
+                return "%"
+            }
+            if (d < 16) {
+                if (random() > .9) return random(["1", "2", "s", "x", ':'])
+                return "0"
+            }
+            if (d < 24) {
+                if (random() > .95) return random(["#", "%", "$", "x", ':'])
+            }
+
+            return char
+        }
+    }
+})
+
+
+function draw() {
+    $portrait.t = millis()
+    $portrait.sin = millis() / 2000 % 1
+    $portrait.noise = mouseY / height / 2
+    $portrait.x = mouseX / 1109
+    $portrait.y = mouseY / 639 + 1
+}
+</script>
+
+
+<style>
+    body {
+        cursor: none;
+    }
+    #portrait {
+        font-family: monospace;
+        line-height: .65;
+        font-size: 14px;
+    }
+</style>

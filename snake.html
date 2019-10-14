@@ -1,0 +1,150 @@
+<div id="portrait">
+    <div class="line" v-for="(line, y) in lines" v-html="makeLine(line, y)"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.10/vue.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.15/lodash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/p5.min.js"></script>
+
+
+<script>
+    let {noise, random, dist, millis} = p5.prototype
+    let r = 3
+
+    new p5();
+
+    // 8.41 x 16.36
+    $grid = new Vue({
+        el: '#portrait',
+        data: {
+            lines: [],
+            width: innerWidth,
+            height: innerHeight,
+            paused: false,
+            trail: [],
+            blocks: [], // TODO: add these - responsive?
+            snake: {
+                dx: 1,
+                dy: 0,
+                head: {
+                    x: 0,
+                    y: 0,
+                },
+                tail: [
+                ]
+            },
+        },
+
+        mounted() {
+            this.updateLines()
+
+            /**
+             * Update, basically
+             */
+            setInterval(() => {
+                let {x, y} = this.snake.head
+                this.snake.tail.push({x, y})
+                this.snake.head.x += this.snake.dx * 8.5
+                this.snake.head.y += this.snake.dy * 9
+            }, 100)
+        },
+
+        methods: {
+            updateLines() {
+                this.lines = []
+                for (let y = 0; y < this.height / 9; y++) {
+                    let l = []
+                    for (let x = 0; x < this.width / 8.5; x++) {
+                        l.push('&block;')
+                    }
+                    this.lines.push(l)
+                }
+
+            },
+
+            makeLine(line, y) {
+                let str = ' '
+                line.forEach((char, x) => {
+                    str += this.charForPos(x, y, char)
+                })
+                return str
+            },
+
+            /**
+             * Draw, basically
+             */
+            charForPos(x, y, char) {
+                let d = p5.prototype.dist(x, y, this.snake.head.x, this.snake.head.y)
+
+                // trail
+                for (const t of this.trail) {
+                    if (t.x == x && t.y == y) return _.sample(['@', '!', '1', 'f', '<'])
+                }
+
+                // noise
+                if (noise(millis(), x, y) > .9)  return "&blk34;"
+
+
+                // ball
+                if (d < 1) {
+                    if (random() > .98) return random(["\""])
+                    return "'"
+                }
+                if (d < 3) {
+                    if (random() > .6) return random(["1", "2", "s", "x", ':'])
+                    return "7"
+                }
+
+                // tail 
+                for (const t of this.snake.tail) {
+                    let d = p5.prototype.dist(x, y, t.x, t.y)
+                    if (d < 1) {
+                        if (random() > .98) return "-"
+                        return "'"
+                    }
+                    if (d < 4) {
+                        if (random() > .6) return random(["1", "2", "s", "x", ':'])
+                        return "7"
+                    }
+                }
+
+
+
+                return char
+            }
+        },
+
+        computed: {
+
+        }
+
+    })
+
+
+
+    addEventListener('mousemove', e => {
+        $grid.mouseX = e.clientX
+        $grid.mouseY = e.clientY
+    })
+
+    addEventListener('resize', () => {
+        $grid.width = innerWidth
+        $grid.height = innerHeight
+        $grid.updateLines()
+    })
+</script>
+
+
+<style>
+    body {
+        cursor: none;
+        margin: 0;
+        overflow: hidden;
+        background: white;
+    }
+    #portrait {
+        font-family: monospace;
+        line-height: .65;
+        font-size: 14px;
+    }
+</style>§

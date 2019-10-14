@@ -1,0 +1,93 @@
+<div id="portrait">
+    <template class="line" v-for="(line, y) in linesFillingViewport">
+        <template v-for="(char, x) in line.split('')">{{charForPos(char, x, y)}}</template>
+        <br>
+    </template>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.10/vue.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.15/lodash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/p5.min.js"></script>
+
+
+<script>
+// 8.41 x 16.36
+$portrait = new Vue({
+    el: '#portrait',
+    data: {
+        lines: [],
+        sin: 0,
+        sinY: 0,
+        noise: 0,
+        x: 0,
+        y: 0,
+        t: 0,
+        width: innerWidth,
+        height: innerHeight
+    },
+    async mounted() {
+        let res = await fetch('portrait.txt')
+        let text = await res.text()
+        this.lines = text.split('\n')
+    },
+    methods: {
+        charForPos(char, x, y) {
+            let d = dist(x, y, this.x * this.linesFillingViewport[0].length, this.y * this.linesFillingViewport.length)
+
+
+            if ((noise(this.t, y) + random() / 10) > 0.9)  return "-"
+
+            return char
+        }
+    },
+
+    computed: {
+        linesFillingViewport() {
+            if (this.lines.length == 0) return []
+
+            let paddedLines = [...this.lines]
+            paddedLines = paddedLines.map(l => {
+                let line = l
+                while ((line.length * 8.41 - 500) < 800) {
+                    line += '0'
+                }
+                return line
+            })
+
+            while (paddedLines.length * 16.36 < 800) {
+                paddedLines.push(_.repeat('0', paddedLines[0].length))
+            }
+
+            return paddedLines
+        }
+    }
+})
+
+
+function draw() {
+    $portrait.t = millis()
+    $portrait.sin = millis() / 2000 % 1
+    $portrait.noise = mouseY / height / 2
+    $portrait.x = mouseX / 1109
+    $portrait.y = mouseY / 639 + 1
+}
+
+
+function windowResized() {
+    $portrait.width = innerWidth
+}
+</script>
+
+
+<style>
+    body {
+        cursor: none;
+        overflow: hidden;
+        margin: 0;
+    }
+    #portrait {
+        font-family: monospace;
+        line-height: .65;
+        font-size: 14px;
+    }
+</style>

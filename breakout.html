@@ -1,0 +1,175 @@
+<div id="portrait">
+    <div class="line" v-for="(line, y) in lines" v-html="makeLine(line, y)"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.10/vue.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.15/lodash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/p5.min.js"></script>
+
+
+<script>
+    let {noise, random, dist, millis} = p5.prototype
+    let r = 3
+
+    new p5();
+
+    // 8.41 x 16.36
+    $grid = new Vue({
+        el: '#portrait',
+        data: {
+            lines: [],
+            width: innerWidth,
+            height: innerHeight,
+            paused: false,
+            trail: [],
+            blocks: [], // TODO: add these - responsive?
+            bat: {
+                vx: 0,
+                x: 10,
+                y: 30,
+                f: .9,
+                w: 10,
+                h: 3
+            },
+            ball: {
+                vx: 2,
+                vy: 2,
+                x: r,
+                y: r
+            }
+        },
+
+        mounted() {
+            this.updateLines()
+
+            /**
+             * Update, basically
+             */
+            setInterval(() => {
+                if (keyIsDown(ESCAPE)) this.paused = !this.paused
+
+                if (this.paused) {
+
+                } else {
+                    this.ball.x += this.ball.vx
+                    this.ball.y += this.ball.vy
+                    this.trail.push({x: this.ball.x - this.ball.vx, y: this.ball.y - this.ball.vy})
+                    this.trail = this.trail.slice(-10)
+
+                    // ball in bounds
+                    if (this.ball.y > this.lines.length - r|| this.ball.y < r) this.ball.vy *= -1
+                    if (this.ball.x > this.lines[0].length - r || this.ball.x < r) this.ball.vx *= -1
+
+                    if (this.ball.x > this.bat.x - this.bat.w &&
+                        this.ball.x < this.bat.x + this.bat.w &&
+                        this.ball.y > this.bat.y - this.bat.h &&
+                        this.ball.y < this.bat.y + this.bat.h) {
+
+                        this.ball.vy *= -1
+                    }
+
+
+                    // bat movement
+                    if (keyIsDown(LEFT_ARROW)) this.bat.vx -= 1
+                    if (keyIsDown(RIGHT_ARROW)) this.bat.vx += 1
+
+                    this.bat.x += this.bat.vx
+                    this.bat.vx *= .85
+
+                    if (this.bat.x > this.lines[0].length + this.bat.w) this.bat.x = 0
+                    if (this.bat.x < - this.bat.w) this.bat.x = this.lines[0].length
+                }
+            }, 10)
+        },
+
+        methods: {
+            updateLines() {
+                this.lines = []
+                for (let y = 0; y < this.height / 9; y++) {
+                    let l = []
+                    for (let x = 0; x < this.width / 8.5; x++) {
+                        l.push('&block;')
+                    }
+                    this.lines.push(l)
+                }
+
+                this.bat.y = this.lines.length - 4
+            },
+
+            makeLine(line, y) {
+                let str = ' '
+                line.forEach((char, x) => {
+                    str += this.charForPos(x, y, char)
+                })
+                return str
+            },
+
+            /**
+             * Draw, basically
+             */
+            charForPos(x, y, char) {
+                let d = p5.prototype.dist(x, y, this.ball.x, this.ball.y)
+
+                // trail
+                for (const t of this.trail) {
+                    if (t.x == x && t.y == y) return _.sample(['@', '!', '1', 'f', '<'])
+                }
+
+                // noise
+                if (noise(millis(), x, y) > .9)  return "&blk34;"
+
+
+                // bat
+                if (x > this.bat.x - this.bat.w / 2 && x < this.bat.x + this.bat.w / 2 && y > this.bat.y - 2 && y < this.bat.y + 2)
+                    return "&macr;"
+
+                // ball
+                if (d < 1) {
+                    if (random() > .98) return random(["\""])
+                    return "'"
+                }
+                if (d < 3) {
+                    if (random() > .6) return random(["1", "2", "s", "x", ':'])
+                    return "7"
+                }
+
+
+
+                return char
+            }
+        },
+
+        computed: {
+
+        }
+
+    })
+
+
+
+    addEventListener('mousemove', e => {
+        $grid.mouseX = e.clientX
+        $grid.mouseY = e.clientY
+    })
+
+    addEventListener('resize', () => {
+        $grid.width = innerWidth
+        $grid.height = innerHeight
+        $grid.updateLines()
+    })
+</script>
+
+
+<style>
+    body {
+        cursor: none;
+        margin: 0;
+        overflow: hidden;
+        background: white;
+    }
+    #portrait {
+        font-family: monospace;
+        line-height: .65;
+        font-size: 14px;
+    }
+</style>§

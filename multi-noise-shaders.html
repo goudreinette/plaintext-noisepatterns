@@ -1,0 +1,76 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/p5.min.js"></script>
+<div id="portrait"></div>
+
+<script>
+    let s
+    const $portrait = document.querySelector('#portrait')
+    const speedFactor = 0.0000001
+    let t = 0
+    let canvas
+    let d
+
+    function preload() {
+        s = loadShader('./shaders/id.vert', './shaders/hash-noise.frag')
+    }
+    function setup() {
+        d = pixelDensity()
+        canvas = createCanvas(innerWidth / 8.4, innerHeight /  9, WEBGL)
+        s.setUniform('gain', [1.0, 1.0, 1.0, 0.0])
+        s.setUniform('bias', [1.0, 1.0, 1.0, 0.0])
+        s.setUniform('seed', 0)
+
+        shader(s)
+    }
+
+    function draw() {
+        s.setUniform('seed', millis() / 100)
+
+        rect(0,0, innerWidth / 8.4, innerHeight /  9)
+        loadPixels()
+
+        let lines = ""
+        for (let y = 0; y < innerHeight / 9; y++) {
+            let str = ""
+            for (let x = 0; x <  innerWidth / 8.4; x++) {
+                str += charForPos(x, y, char)
+            }
+            lines += str + "\n"
+        }
+        $portrait.innerHTML = lines
+    }
+
+    function charForPos(x, y, char) {
+        t += speedFactor
+        let off = pixels[(y * width + x) * d * 4]
+        let n = off / 255
+
+
+        // noise
+        if (n > .9 ) return "&nbsp;"
+        if (n > .7 ) return "."
+        if (n > .65 ) return "~"
+        if (n > .55 ) return "H"
+        if (n > .5 ) return "3"
+        if (n > .4 ) return "&blk34;"
+
+        return '&block;'
+    }
+</script>
+
+<style>
+    body {
+        cursor: none;
+        margin: 0;
+        overflow: hidden;
+        cursor: default;
+        user-select: none;
+    }
+    #portrait {
+        font-family: monospace;
+        line-height: .65;
+        font-size: 14px;
+    }
+    canvas {
+        display: none;
+    }
+</style>

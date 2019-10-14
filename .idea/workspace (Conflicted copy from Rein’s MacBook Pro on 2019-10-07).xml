@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="1b7fde99-2f41-467d-b762-101a1e316346" name="Default Changelist" comment="" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ComposerSettings">
+    <execution>
+      <executable />
+    </execution>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="GLSL Shader" />
+      </list>
+    </option>
+  </component>
+  <component name="MacroExpansionManager">
+    <option name="directoryName" value="GdzpxYnf" />
+  </component>
+  <component name="ProjectId" id="1QxIpjsrUXkJLys2RkOsx1ijIAI" />
+  <component name="PropertiesComponent">
+    <property name="WebServerToolWindowFactoryState" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="settings.editor.selected.configurable" value="liveEdit" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="JavaScript Debug.multi-noise-shaders.html">
+    <configuration name="breakout.html" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63345/1. Self-portrait/breakout.html" useBuiltInWebServerPort="true">
+      <method v="2" />
+    </configuration>
+    <configuration name="multi-noise-shaders.html" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/1. Self-portrait/multi-noise-shaders.html" useBuiltInWebServerPort="true">
+      <method v="2" />
+    </configuration>
+    <configuration name="multi-noise-vueless.html" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/1. Self-portrait/multi-noise-vueless.html" useBuiltInWebServerPort="true">
+      <method v="2" />
+    </configuration>
+    <configuration name="multi-noise.html" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/1. Self-portrait/multi-noise.html" useBuiltInWebServerPort="true">
+      <method v="2" />
+    </configuration>
+    <configuration name="pong-fast.html" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/1. Self-portrait/pong-fast.html" useBuiltInWebServerPort="true">
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JavaScript Debug.multi-noise-shaders.html" />
+        <item itemvalue="JavaScript Debug.multi-noise-vueless.html" />
+        <item itemvalue="JavaScript Debug.multi-noise.html" />
+        <item itemvalue="JavaScript Debug.breakout.html" />
+        <item itemvalue="JavaScript Debug.pong-fast.html" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="1b7fde99-2f41-467d-b762-101a1e316346" name="Default Changelist" comment="" />
+      <created>1568706004813</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1568706004813</updated>
+      <workItem from="1568706007809" duration="4563000" />
+      <workItem from="1568824509447" duration="1986000" />
+      <workItem from="1569258055426" duration="209000" />
+      <workItem from="1569258336471" duration="4168000" />
+      <workItem from="1569263443571" duration="1492000" />
+      <workItem from="1569311368148" duration="4305000" />
+      <workItem from="1569317836513" duration="702000" />
+      <workItem from="1569344162187" duration="943000" />
+      <workItem from="1569399263214" duration="99000" />
+      <workItem from="1569514025780" duration="620000" />
+      <workItem from="1569862413812" duration="5831000" />
+      <workItem from="1569915165222" duration="3136000" />
+      <workItem from="1569927207544" duration="367000" />
+      <workItem from="1570012801990" duration="423000" />
+      <workItem from="1570175660400" duration="2618000" />
+      <workItem from="1570180721882" duration="604000" />
+      <workItem from="1570429552721" duration="424000" />
+      <workItem from="1570439380800" duration="541000" />
+      <workItem from="1570443688985" duration="48000" />
+      <workItem from="1570443806178" duration="1773000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+</project>

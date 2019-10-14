@@ -1,0 +1,132 @@
+<pre id="portrait"><div class="line" v-for="(line, y) in lines" v-html="makeLine(line, y)"></div></pre>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.10/vue.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.15/lodash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/p5.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/simplex-noise/2.4.0/simplex-noise.js"></script>
+
+<script>
+    let {noise, random, dist, millis, map} = p5.prototype
+    let r = 3
+
+    const simplex = new SimplexNoise()
+
+    new p5();
+
+    // 8.41 x 16.36
+    new Vue({
+        el: '#portrait',
+        data: {
+            lines: [],
+            width: innerWidth,
+            height: innerHeight,
+            noiseFn: simplex.noise3D.bind(simplex),
+            whiteness: 0,
+            speedFactor: 0.0001,
+            maxTime: 0,
+            t: 0,
+            barX: 0
+        },
+
+        mounted() {
+            this.updateLines()
+
+            addEventListener('resize', () => {
+                this.width = innerWidth
+                this.height = innerHeight
+                this.updateLines()
+            })
+
+            addEventListener('mousemove', e => {
+                if (mouseIsPressed) {
+                    this.maxTime = millis() * this.speedFactor + this.maxTime
+                    this.whiteness = map(e.clientY, 0, innerHeight, -0.3, 0.3)
+                    this.speedFactor = map(e.clientX, 0, innerWidth, 0.0001, 0.003)
+                    this.barX = map(e.clientX, 0, innerWidth, 0, this.lines[0].length)
+                }
+            })
+
+            addEventListener('keydown', ({key}) => {
+                if (key == '1')
+                    this.noiseFn = simplex.noise3D.bind(simplex)
+                if (key == '2')
+                    this.noiseFn = noise
+                if (key == 'Escape') {
+                    this.paused = !this.paused
+                }
+            })
+
+            /**
+             * Update, basically
+             */
+            setInterval(() => {
+                this.$forceUpdate()
+            }, 5)
+        },
+
+        methods: {
+            updateLines() {
+                this.lines = []
+                for (let y = 0; y < this.height / 9; y++) {
+                    let l = []
+                    for (let x = 0; x < this.width / 8.4; x++) {
+                        l.push('&block;')
+                    }
+                    this.lines.push(l)
+                }
+            },
+
+            makeLine(line, y) {
+                return line.reduce((str, char, x) =>
+                    str + this.charForPos(x, y, char))
+            },
+
+            /**
+             * Draw, basically
+             */
+            charForPos(x, y, char) {
+                let n;
+
+                if (mouseIsPressed) {
+                    n = this.noiseFn(x * 0.04, y * 0.04, this.t)
+                    // speed lines
+                    if ((y <= 1 ) && x <= this.barX) {
+                        return "&nbsp;"
+                    }
+                } else {
+                    let t = this.t = millis() * this.speedFactor
+                    n = this.noiseFn(x * 0.04, y * 0.04, t)
+                }
+
+                // noise
+                if (n > .9 + this.whiteness)  return "&nbsp;"
+                if (n > .7 + this.whiteness)   return "."
+                if (n > .65 + this.whiteness)   return "~"
+                if (n > .55 + this.whiteness)  return "|"
+                if (n > .5 + this.whiteness) return "="
+                if (n > .4 + this.whiteness)   return "&blk34;"
+
+                return char
+            }
+        },
+    })
+
+
+
+</script>
+
+
+<style>
+    body {
+        cursor: none;
+        margin: 0;
+        overflow: hidden;
+        cursor: default;
+        user-select: none;
+    }
+    #portrait {
+        font-family: monospace;
+        line-height: .65;
+        font-size: 14px;
+    }
+</style>

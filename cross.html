@@ -1,0 +1,56 @@
+<div id="portrait">
+    <div class="line" v-for="(line, y) in lines">
+        <template v-for="(char, x) in line.split('')">{{charForPos(char, x, y)}}</template>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.10/vue.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.15/lodash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/p5.min.js"></script>
+
+
+<script>
+$portrait = new Vue({
+    el: '#portrait',
+    data: {
+        lines: [],
+        sin: 0,
+        sinY: 0
+    },
+    async mounted() {
+        let res = await fetch('portrait.txt')
+        let text = await res.text()
+        this.lines = text.split('\n')
+    },
+    methods: {
+        charForPos(char, x, y) {
+            let s = Math.floor(this.sin * this.lines[0].length)
+            let sy = Math.floor(this.sinY * this.lines.length)
+            let d = Math.abs(s - x)
+            let dY = Math.abs(sy - y)
+
+            if (random() < .05)  return "-"
+            if (d < 3 || dY < 3) return "'"
+            if (d < 5 || dY < 5) return "."
+            if (d < 7 || dY < 7) return "-"
+
+            return char
+        }
+    }
+})
+
+
+function draw() {
+    $portrait.sin = map(sin(millis() / 1000), -1, 1, 0, 1)
+    // $portrait.sin = millis() / 2000 % 1
+    $portrait.sinY = millis() / 2000 % 1
+}
+</script>
+
+
+<style>
+    #portrait {
+        font-family: monospace;
+        line-height: .65;
+    }
+</style>

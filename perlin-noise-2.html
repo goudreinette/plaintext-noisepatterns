@@ -1,0 +1,101 @@
+<div id="portrait">
+    <div class="line" v-for="(line, y) in lines" v-html="makeLine(line, y)"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.10/vue.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.15/lodash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/p5.min.js"></script>
+
+
+<script>
+    let {noise, random, dist, millis} = p5.prototype
+    let r = 3
+
+    new p5();
+
+    // 8.41 x 16.36
+    $grid = new Vue({
+        el: '#portrait',
+        data: {
+            lines: [],
+            width: innerWidth,
+            height: innerHeight,
+            paused: false
+        },
+
+        mounted() {
+            this.updateLines()
+
+            /**
+             * Update, basically
+             */
+            setInterval(() => {
+                this.$forceUpdate()
+            }, 5)
+        },
+
+        methods: {
+            updateLines() {
+                this.lines = []
+                for (let y = 0; y < this.height / 9; y++) {
+                    let l = []
+                    for (let x = 0; x < this.width / 8.5; x++) {
+                        l.push('&block;')
+                    }
+                    this.lines.push(l)
+                }
+            },
+
+            makeLine(line, y) {
+                let str = ' '
+                line.forEach((char, x) => {
+                    str += this.charForPos(x, y, char)
+                })
+                return str
+            },
+
+            /**
+             * Draw, basically
+             */
+            charForPos(x, y, char) {
+                let n = noise(x * 0.02, y * 0.02, millis() / 8000)
+
+                // noise
+                if (n > .9)  return "."
+                if (n > .8)   return "-"
+                if (n > .7)   return "~"
+                if (n > .6)  return "!"
+                if (n > .5) return "="
+                if (n > .4)   return "&blk34;"
+
+                return char
+            }
+        },
+
+        computed: {
+
+        }
+
+    })
+
+
+    addEventListener('resize', () => {
+        $grid.width = innerWidth
+        $grid.height = innerHeight
+        $grid.updateLines()
+    })
+</script>
+
+
+<style>
+    body {
+        cursor: none;
+        margin: 0;
+        overflow: hidden;
+    }
+    #portrait {
+        font-family: monospace;
+        line-height: .65;
+        font-size: 14px;
+    }
+</style>§
