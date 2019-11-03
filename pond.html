@@ -1,6 +1,8 @@
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.15/lodash.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/p5.min.js"></script>
+
+<head></head>
+
 
 <script>
     new p5();
@@ -10,33 +12,47 @@
     let t = 0,
         lineLength = 0
 
-    let snowballs = []
+    let ripples = []
+    let fishes = []
+    let m
+
+    for (let i = 0; i < 5; i++) {
+        fishes.push({
+            x: random(innerWidth / charWidth),
+            y: random(innerHeight / charHeight),
+            direction: random(360),
+            slowness: random(300, 500),
+            color: random(['&#9619;', '&#9617;', '&#9618'])
+        })
+    }
+    
+    addEventListener('mousedown', e => {
+		ripples.push({
+			x: e.clientX / charWidth,
+			y: e.clientY / charHeight,
+			r: 1
+		})
+    })
 
 
-    /**
-     * Clouds
-     *
-     *
-     */
     function draw() {
-        if (random() > 0.9 && snowballs.length < 5) {
-            snowballs.push({
-	            x: random(innerWidth / charWidth * 2),
-	            y: -5,
-                vx: random(-1, -0.8),
-                vy: random(1, 2),
-	            size: random(3, 5),
-            })
+        m = millis()
+        // Update ripples
+        for (let i = 0; i < ripples.length; i++) {
+	        let ripple = ripples[i]
+            ripple.r += .1
+            if (ripple.r > 50) {
+                ripples.splice(i,1)
+            }
         }
 
-        for (let i = 0; i < snowballs.length; i++) {
-            const snowball = snowballs[i]
-            snowball.x += snowball.vx + random(-0.2, 0.2)
-            snowball.y += snowball.vy + random(-0.2, 0.2)
-	        snowball.size += random(-.25, .25)
-	        if (snowball.y > innerHeight / charHeight + snowball.size || snowball.x < -snowball.size) {
-	            snowballs.splice(i, 1)
-            }
+        // Update fish 
+        for (const fish of fishes) {
+            let v = p5.Vector.fromAngle(radians(fish.direction), .2)
+            fish.x -= v.x
+            fish.y += v.y
+
+            fish.direction += noise(millis()) - .5
         }
 
 	    // The update loop
@@ -49,6 +65,7 @@
             }
             lines += str + "\n"
         }
+        
         document.body.innerHTML = lines
     }
 
@@ -57,29 +74,52 @@
      * Draw, basically
      */
     function charForPos(x, y, char) {
-        if (mouseIsPressed) {
-            // speed lines
-            if ((y <= 1 ) && x <= e.clientX / 8.4) {
-                return "&nbsp;"
+        // Ripples
+	    for (const ripple of ripples) {
+	        let d = dist(ripple.x, ripple.y, x, y)
+			if (d < ripple.r && d > ripple.r - 1) {
+                if (ripple.r < 45) {
+                    return "&blk34;"
+                }
+            }
+            
+            if (d < ripple.r - 3 && d > ripple.r - 4) {
+                if (ripple.r < 50) {
+                    return "&blk34;"
+                }
+            }
+        }
+        
+        // fishes
+        for (const fish of fishes) {
+            if (dist(fish.x, fish.y, x, y) < 1.5) {
+                return fish.color
+            }
+
+            // Wagging tail
+            let v = p5.Vector.fromAngle(radians(fish.direction + sin(millis() / fish.slowness) * 20), 3)
+            if (dist(fish.x + v.x, fish.y - v.y, x, y) < 2) {
+                return fish.color
+            }
+
+            let v2 = p5.Vector.fromAngle(radians(fish.direction + sin(millis() / fish.slowness - fish.slowness / 2) * 20), 9)
+            if (dist(fish.x + v2.x, fish.y - v2.y, x, y) < 1) {
+                return fish.color
             }
         }
 
-        for (const snowball of snowballs) {
-			if (dist(snowball.x, snowball.y, x, y) < snowball.size) {
-				return "&nbsp;"
-			}
-        }
 
         return '&block;'
     }
-    
-
-
 
 </script>
 
 
 <style>
+    * {
+        cursor: pointer;
+    }
+
     body {
         cursor: none;
         margin: 0;
