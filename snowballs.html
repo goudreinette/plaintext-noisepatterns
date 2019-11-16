@@ -12,18 +12,6 @@
     const charHeight = 9.0
     let t = 0,
         lineLength = 0
-    
-    let startX = random(innerWidth / charWidth * .2, innerWidth / charWidth * .8)
-    let cloud = {
-        startX,
-        ellipses: Array.apply(null, Array(5)).map(i => {
-            return {
-                x: startX + random(-40, 50),
-                y: random(0, 10),
-                r: random(3, 20)
-            }
-        })
-    }
 
     let snowballs = []
 
@@ -40,7 +28,7 @@
 	            y: -5,
                 vx: random(-1, -0.8),
                 vy: random(1, 2),
-	            size: random(1, 2),
+	            size: random(3, 5),
             })
         }
 
@@ -48,6 +36,7 @@
             const snowball = snowballs[i]
             snowball.x += snowball.vx + random(-0.2, 0.2)
             snowball.y += snowball.vy + random(-0.2, 0.2)
+	        snowball.size += random(-.25, .25)
 	        if (snowball.y > innerHeight / charHeight + snowball.size || snowball.x < -snowball.size) {
 	            snowballs.splice(i, 1)
             }
@@ -71,16 +60,17 @@
      * Draw, basically
      */
     function charForPos(x, y, char) {
+        if (mouseIsPressed) {
+            // speed lines
+            if ((y <= 1 ) && x <= e.clientX / 8.4) {
+                return "&nbsp;"
+            }
+        }
+
         for (const snowball of snowballs) {
 			if (dist(snowball.x, snowball.y, x, y) < snowball.size) {
 				return "&nbsp;"
 			}
-        }
-
-        for (const ellipse of cloud.ellipses) {
-            if (dist(ellipse.x, ellipse.y, x, y) < ellipse.r) {
-                return "&nbsp;"
-            }
         }
 
         return '&block;'

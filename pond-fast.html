@@ -16,7 +16,7 @@
     let fishes = []
     let m
 
-    for (let i = 0; i < 7; i++) {
+    for (let i = 0; i < 5; i++) {
         addFish()
     }
 
@@ -24,10 +24,9 @@
         fishes.push({
             x: random(innerWidth / charWidth),
             y: random(innerHeight / charHeight),
-            life: 0,
             direction: random(360),
             slowness: random(300, 500),
-            color:  random(['h', 'e', 'l', 'o']) // random(['&#9619;', '&#9617;', '&#9618'])
+            color: random(['&#9619;', '&#9617;', '&#9618'])
         })
     }
     
@@ -46,7 +45,7 @@
         for (let i = 0; i < ripples.length; i++) {
 	        let ripple = ripples[i]
             ripple.r += .5
-            if (ripple.r > 15) {
+            if (ripple.r > 12) {
                 ripples.splice(i,1)
             }
         }
@@ -54,10 +53,6 @@
         // Update fish 
         for (let i = 0; i < fishes.length; i++) {
 	        let fish = fishes[i]
-
-            if (fish.life <= 1)
-                fish.life += .1
-
             let v = p5.Vector.fromAngle(radians(fish.direction), .2)
             fish.x -= v.x
             fish.y += v.y
@@ -71,17 +66,35 @@
             }
         }
 
+
 	    // The update loop
-        let lines = ""
+        let lines = []
         lineLength = innerWidth / charWidth
         for (let y = 0; y < innerHeight / charHeight; y++) {
-            let str = ""
-            for (let x = 0; x < innerWidth / charWidth; x++) {
-                str += charForPos(x, y, char)
-            }
-            lines += str + "\n"
+            lines.push("&block;".repeat(innerWidth / charWidth) + "\n")
         }
 
+        lines[Math.floor(sin(millis() / 1000)) * 200][100] =  '&#9618'
+
+
+        // Primitives library???
+        // Rect, line, img, ...
+
+        // Ripples
+	    // for (const ripple of ripples) {
+	    //     let d = dist(ripple.x, ripple.y, x, y)
+		// 	if (d < ripple.r && d > ripple.r - 1) {
+        //         if (ripple.r < 10) {
+        //             return  ripple.r > 5 ? "&blk34;" : "&blk12;"
+        //         }
+        //     }
+            
+        //     if (d < ripple.r - 3 && d > ripple.r - 4) {
+        //         if (ripple.r < 11.5) {
+        //             return "&blk34;"
+        //         }
+        //     }
+        // }
         
         
         document.body.innerHTML = lines
@@ -92,49 +105,28 @@
      * Draw, basically
      */
     function charForPos(x, y, char) {
-        y += sin(x, millis() / 1000) / 2
-        // y += noise(y, millis() / 1000)
-        // Ripples
-	    for (const ripple of ripples) {
-	        let d = dist(ripple.x, ripple.y, x, y)
-			if (d < ripple.r && d > ripple.r - 1) {
-                if (ripple.r < 10) {
-                    return  ripple.r > 5 ? "&blk34;" : "#"
-                }
-            }
-            
-            if (d < ripple.r - 3 && d > ripple.r - 4) {
-                if (ripple.r < 11.5) {
-                    return "*"
-                }
-            }
-        }
+        
         
         // fishes
         for (const fish of fishes) {
-            if (dist(fish.x, fish.y, x, y) < 1.5 * fish.life) {
+            if (dist(fish.x, fish.y, x, y) < 1.5) {
                 return fish.color
             }
 
             // Wagging tail
             let v = p5.Vector.fromAngle(radians(fish.direction + sin(millis() / fish.slowness) * 20), 3)
-            if (dist(fish.x + v.x, fish.y - v.y, x, y) < 2 * fish.life) {
+            if (dist(fish.x + v.x, fish.y - v.y, x, y) < 2) {
                 return fish.color
             }
 
             let v2 = p5.Vector.fromAngle(radians(fish.direction + sin(millis() / fish.slowness - fish.slowness / 2) * 5), 6)
-            if (dist(fish.x + v2.x, fish.y - v2.y, x, y) < 1 * fish.life) {
+            if (dist(fish.x + v2.x, fish.y - v2.y, x, y) < 1) {
                 return fish.color
             }
         }
 
-        n = noise(x * 0.04, y * 0.04, millis() / 100000)
 
- 
-        if (n > .65)   return "*"
-        if (n > .55)  return "H"
-        if (n > .5) return "%"
-         return "#"
+        return '&block;'
     }
 
 </script>
@@ -146,12 +138,10 @@
     }
 
     body {
-        color: rgb(0, 0, 0);
-        background: rgb(0, 255, 21);
         cursor: none;
         margin: 0;
         cursor: default;
-        /* user-select: none; */
+        user-select: none;
 	    display: block;
 	    unicode-bidi: embed;
 	    white-space: pre;
