@@ -1,16 +1,38 @@
-import {render, charForPos} from './Cargo.toml'
-let {noise, random, dist, millis, mp} = p5.prototype
-let r = 3
+import {set_text, real_text} from './Cargo.toml'
+let {millis} = p5.prototype
 
 
-new p5();
+const newsAPIKey = 'cadf03152b7a4215896a1082e2025109'
 
-window.render = render
-window.$portrait = document.querySelector('#portrait')
-// console.log(render(innerWidth, innerHeight, millis()))
+/**
+ * Fetch a news article and give it to Rust for initialization
+ */
+
+fetch(`https://newsapi.org/v2/top-headlines?country=nl&apiKey=cadf03152b7a4215896a1082e2025109`).then(async response => {
+    const {articles} = await response.json()
+
+    let aggregatedArticles = ""
+    for (const article of shuffleArray(articles.slice(0, 3))) {
+        aggregatedArticles += `${article.title} ------ `
+    }
+
+    set_text(aggregatedArticles)
+
+    new p5();
+    let $portrait = document.querySelector('#portrait')
+    setInterval(() => {
+        $portrait.innerHTML = real_text(innerWidth, innerHeight, millis())
+    }, 16)
+})
 
 
-setInterval(() => {
-    $portrait.innerHTML = render(innerWidth, innerHeight, millis())
-}, 16)
-
+/**
+ * Utils
+ */
+function shuffleArray(a) {
+    for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+}
