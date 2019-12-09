@@ -155,7 +155,7 @@
         const {articles} = await response.json()
 
         let aggregatedArticles = ""
-        for (const article of shuffleArray(articles.slice(0, 3))) {
+        for (const article of shuffleArray(articles).slice(0, 3)) {
             aggregatedArticles += ` ${article.title} ------ `
         }
 
