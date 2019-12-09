@@ -4,16 +4,17 @@ let {millis} = p5.prototype
 
 const newsAPIKey = 'cadf03152b7a4215896a1082e2025109'
 
+
+
 /**
  * Fetch a news article and give it to Rust for initialization
  */
-
 fetch(`https://newsapi.org/v2/top-headlines?country=nl&apiKey=cadf03152b7a4215896a1082e2025109`).then(async response => {
     const {articles} = await response.json()
 
     let aggregatedArticles = ""
     for (const article of shuffleArray(articles.slice(0, 3))) {
-        aggregatedArticles += `${article.title} ------ `
+        aggregatedArticles += ` ${article.title} ------ `
     }
 
     set_text(aggregatedArticles)
@@ -24,6 +25,7 @@ fetch(`https://newsapi.org/v2/top-headlines?country=nl&apiKey=cadf03152b7a421589
         $portrait.innerHTML = real_text(innerWidth, innerHeight, millis())
     }, 16)
 })
+
 
 
 /**
