@@ -8,7 +8,7 @@
     "vue-template-compiler": "^2.6.10"
   },
   "dependencies": {
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.21",
     "p5": "^0.9.0",
     "vue": "^2.6.10",
     "vue-hot-reload-api": "^2.3.4"
